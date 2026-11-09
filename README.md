@@ -13,8 +13,6 @@ python -m venv .venv
 .venv\Scripts\activate            # Windows (en Linux/Mac: source .venv/bin/activate)
 pip install -r requirements.txt
 copy .env.example .env            # Windows (en Linux/Mac: cp .env.example .env)
-python manage.py migrate
-python manage.py cargar_catalogo  # 3 dimensiones, 18 factores, 61 subfactores
 python manage.py runserver
 ```
 
@@ -32,9 +30,6 @@ Para un usuario administrador propio: `python manage.py createsuperuser`.
 1. En Supabase crea un proyecto y guarda la contraseña de la base de datos.
 2. Entra a **Connect** > **Connection string** y copia la cadena URI (modo *Session pooler*, puerto 5432).
 3. Pégala en `.env`: `DATABASE_URL=postgresql://postgres.xxxx:TU_CLAVE@aws-0-REGION.pooler.supabase.com:5432/postgres`
-4. Ejecuta `python manage.py migrate` y `python manage.py cargar_catalogo` otra vez, ahora sobre Supabase.
-5. Ejecuta `python manage.py activar_rls`. Supabase publica por API las tablas del esquema `public`; con RLS activado
-   (y sin políticas) esa API no puede leer nada. Django sigue funcionando porque se conecta con el rol `postgres`.
 
 La autenticación la maneja Django (tabla `auth_user`); no se usa Supabase Auth.
 
