@@ -1,0 +1,40 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}IS con IA{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>{% icono 'spark' %} Importancia sugerida con IA</h1>
+  <p class="muted">La IS deja de ser fija: el sistema aprende de las evaluaciones y propone ajustes que tú apruebas.</p></div></div>
+<section class="grid-3" data-stagger>
+  <article class="card stat tone-navy"><div><small>Evaluaciones finalizadas</small><strong data-count="{{ n_eval }}">0</strong></div></article>
+  <article class="card stat tone-orange"><div><small>Valoraciones de factores</small><strong data-count="{{ n_obs }}">0</strong></div></article>
+  <article class="card stat tone-blue"><div><small>Propuestas pendientes</small><strong data-count="{{ pendientes|length }}">0</strong></div></article>
+</section>
+<article class="card reveal">
+  <div class="card-h"><h3>Generar propuestas</h3></div>
+  <form method="post" class="gen"><div class="form-grid">{% csrf_token %}
+    <label class="field"><span>Sector (opcional)</span><select name="sector"><option value="">Todos</option>{% for v, n in sectores %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label>
+    <label class="field"><span>Tamaño (opcional)</span><select name="tamano"><option value="">Todos</option>{% for v, n in tamanos %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label></div>
+    <div class="row-btns"><button class="btn primary" name="accion" value="generar_historial">{% icono 'chart' %} Aprender del historial</button>
+    <button class="btn" name="accion" value="generar_llm" {% if not ia_llm_disponible %}disabled title="Configura ANTHROPIC_API_KEY en el archivo .env"{% endif %}>{% icono 'spark' %} Proponer con modelo de lenguaje</button></div></form>
+  <p class="muted small">Historial: estimación bayesiana que combina la IS de la tesis con las valoraciones reales, ponderando por recencia y similitud de perfil. Con pocos datos casi no cambia nada.</p>
+</article>
+<article class="card reveal">
+  <div class="card-h"><h3>Propuestas pendientes</h3></div>
+  {% for p in pendientes %}
+  <div class="prop"><div class="prop-h"><b>{{ p.factor.nombre }}</b><span class="badge neutral">{{ p.get_metodo_display }}</span></div>
+    <div class="shift"><span class="badge neutral">{{ p.nivel_actual|nivel }}</span>{% icono 'arrow' %}<span class="badge {{ p.nivel_propuesto|clase_ir }}">{{ p.nivel_propuesto|nivel }}</span><small class="muted">confianza {{ p.confianza|floatformat:2 }}</small></div>
+    <p class="muted">{{ p.justificacion }}</p>
+    <form method="post" class="row-btns">{% csrf_token %}<input type="hidden" name="id" value="{{ p.id }}"><button class="btn primary sm" name="accion" value="aprobar">Aprobar</button><button class="btn sm" name="accion" value="rechazar">Rechazar</button></form></div>
+  {% empty %}<p class="muted">No hay propuestas pendientes.</p>{% endfor %}
+</article>
+<section class="grid-main">
+<article class="card reveal"><div class="card-h"><h3>IS por factor</h3><small class="muted">0 Irrelevante – 3 Fundamental</small></div>
+  <table class="table"><thead><tr><th>Factor</th><th>Tesis</th><th>Vigente</th><th style="width:30%">Estimación del historial</th><th></th></tr></thead><tbody data-stagger-rows>
+  {% for x in factores %}<tr><td><b>{{ x.f.nombre }}</b></td><td>{{ x.f.importancia_base|nivel }}</td><td><span class="badge {{ x.f.importancia_sugerida|clase_ir }}">{{ x.f.importancia_sugerida|nivel }}</span></td>
+    <td>{% if x.est %}<div class="hbar slim"><div class="track"><i class="blue" data-w="{{ x.pct }}"></i></div><b>{{ x.est.valor|floatformat:2 }}</b></div>{% else %}<span class="muted">Datos insuficientes</span>{% endif %}</td>
+    <td>{% if x.cambio %}<form method="post" class="inline">{% csrf_token %}<input type="hidden" name="accion" value="restaurar"><input type="hidden" name="id" value="{{ x.f.id }}"><button class="btn sm" data-confirm="¿Restaurar la IS original de la tesis?">Restaurar</button></form>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></article>
+<article class="card reveal"><div class="card-h"><h3>Cambios aplicados</h3></div>
+  <ul class="list compact">{% for h in historial %}<li><div class="grow"><b>{{ h.factor.nombre }}</b><small>{{ h.nivel_anterior|nivel }} → {{ h.nivel_nuevo|nivel }} · {{ h.origen }}<br>{{ h.fecha|date:"d/m/Y H:i" }}{% if h.usuario %} · {{ h.usuario.get_username }}{% endif %}</small></div></li>
+  {% empty %}<li class="muted">Todavía no se aplicó ningún cambio.</li>{% endfor %}</ul></article>
+</section>
+{% endblock %}

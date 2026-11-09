@@ -1,0 +1,58 @@
+{% load static guios_extras %}<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}GUIOS PRO{% endblock %} · GUIOS PRO</title>
+<meta name="theme-color" content="#1F3A56">
+<link rel="stylesheet" href="{% static 'guios/css/app.css' %}">
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+<div class="bg" aria-hidden="true"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i></div>
+<div id="nav-progress"></div>
+{% block cuerpo %}
+<div class="app" id="app">
+  <aside class="side" id="side">
+    <a class="brand" href="{% url 'dashboard' %}"><span class="brand-mark">G</span><span>GUIOS <b>PRO</b></span></a>
+    <nav class="nav" data-stagger>
+      {% with u=request.resolver_match.url_name %}
+      <a href="{% url 'dashboard' %}" class="{% if u == 'dashboard' %}on{% endif %}">{% icono 'home' %}<span>Panel</span></a>
+      <a href="{% url 'alternativas' %}" class="{% if u == 'alternativas' %}on{% endif %}">{% icono 'box' %}<span>Alternativas</span></a>
+      <a href="{% url 'evaluacion_nueva' %}" class="{% if u == 'evaluacion_nueva' %}on{% endif %}">{% icono 'clip' %}<span>Nueva evaluación</span></a>
+      <a href="{% url 'historial' %}" class="{% if u == 'historial' or u == 'evaluacion' or u == 'resultados' or u == 'importancia' or u == 'subfactores' %}on{% endif %}">{% icono 'history' %}<span>Historial</span></a>
+      {% if es_admin %}
+      <div class="nav-sep">Administración</div>
+      <a href="{% url 'catalogo' %}" class="{% if u == 'catalogo' %}on{% endif %}">{% icono 'book' %}<span>Catálogo</span></a>
+      <a href="{% url 'ia_importancia' %}" class="{% if u == 'ia_importancia' %}on{% endif %}">{% icono 'spark' %}<span>IS con IA</span></a>
+      <a href="{% url 'usuarios' %}" class="{% if u == 'usuarios' %}on{% endif %}">{% icono 'users' %}<span>Usuarios</span></a>
+      {% endif %}
+      {% endwith %}
+    </nav>
+    <div class="side-foot">
+      <div class="who"><span class="avatar">{{ request.user|iniciales }}</span>
+        <div><b>{{ request.user.get_full_name|default:request.user.username }}</b><small>{% if es_admin %}Administrador{% else %}Decisor{% endif %}</small></div></div>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="icon-btn" title="Salir">{% icono 'logout' %}</button></form>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <button class="icon-btn only-mobile" id="burger" aria-label="Menú">{% icono 'menu' %}</button>
+      <form class="search" action="{% url 'historial' %}" method="get">{% icono 'search' %}<input name="q" placeholder="Buscar una alternativa en el historial" aria-label="Buscar"></form>
+      <div class="top-r">
+        {% if es_admin %}<a class="icon-btn bell" href="{% url 'ia_importancia' %}" title="Propuestas de IA">{% icono 'bell' %}</a>{% endif %}
+        <span class="avatar">{{ request.user|iniciales }}</span>
+      </div>
+    </header>
+    <main class="content">
+      {% block contenido %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}
+<div class="toasts" id="toasts">
+  {% for m in messages %}<div class="toast {{ m.tags }}" role="status">{{ m }}</div>{% endfor %}
+</div>
+<script src="{% static 'guios/js/app.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

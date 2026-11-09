@@ -1,0 +1,26 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Subfactores{% endblock %}
+{% block contenido %}
+{% include "guios/_pasos.html" with activo=2 %}
+<section class="split">
+  <aside class="card side-list reveal"><div class="card-h"><h3>Factores relevantes</h3></div>
+    <ul class="list compact" data-stagger>{% for x in lista %}
+      <li><a class="{% if x.activo %}on{% endif %}" href="?f={{ x.v.factor_id }}"><span class="grow">{{ x.v.factor.nombre }}</span>
+        <span class="badge {% if x.ok %}good{% else %}neutral{% endif %}">{{ x.hechos }}/{{ x.total }}</span></a></li>{% endfor %}</ul>
+    <a class="btn block mt" href="{% url 'evaluacion' ev.pk %}">Volver a la evaluación</a>
+  </aside>
+  <form method="post" class="card reveal" id="formSub">{% csrf_token %}
+    <div class="card-h"><div><h3>{{ factor.nombre }}</h3><small class="muted">{{ factor.dimension.nombre }} · importancia relativa: {{ sel.importancia_relativa|nivel }}</small></div>
+      <div class="counter"><strong id="subCount">0</strong><small>de {{ filas|length }}</small></div></div>
+    <div class="track"><i id="subBar" data-w="0"></i></div>
+    <ul class="sublist" data-stagger>
+      {% for x in filas %}
+      <li><p>{{ x.s.texto }}</p>
+        <div class="seg">{% for v, corto, largo in opciones %}<label title="{{ largo }}"><input type="radio" name="s_{{ x.s.id }}" value="{{ v }}" {% if x.val == v %}checked{% endif %}><span>{{ corto }}</span></label>{% endfor %}</div></li>
+      {% endfor %}
+    </ul>
+    <small class="muted">Parcial = Cumple parcialmente el requisito · Desconozco = Desconozco si cumple requisito.</small>
+    <div class="form-foot"><div class="pm-live" id="pmLive">Ponderación media: <b>—</b></div><button class="btn primary">Guardar y continuar {% icono 'arrow' %}</button></div>
+  </form>
+</section>
+{% endblock %}

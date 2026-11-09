@@ -1,0 +1,54 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Panel{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>Panel</h1><p class="muted">Resumen de tus evaluaciones de adopción de software.</p></div>
+  <a class="btn accent" href="{% url 'evaluacion_nueva' %}">{% icono 'plus' %} Nueva evaluación</a></div>
+
+<section class="grid-4" data-stagger>
+  {% for t in tarjetas %}
+  <article class="card stat tone-{{ t.tono }}"><div><small>{{ t.titulo }}</small><strong data-count="{{ t.valor }}">0</strong></div><span class="stat-ico">{% icono t.icono %}</span></article>
+  {% endfor %}
+</section>
+
+<section class="grid-main">
+  <article class="card reveal">
+    <div class="card-h"><h3>Evaluaciones por mes</h3><small class="muted">Últimos 6 meses</small></div>
+    <div class="bars" role="img" aria-label="Evaluaciones por mes">
+      {% for g in grafico %}<div class="bcol"><span class="bnum">{{ g.n }}</span><div class="btrack"><i data-h="{{ g.alto }}"></i></div><small>{{ g.mes }}</small></div>{% endfor %}
+    </div>
+  </article>
+  <article class="card reveal">
+    <div class="card-h"><h3>Adopción</h3><small class="muted">Evaluaciones adoptables</small></div>
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="ring-bg"/><circle cx="60" cy="60" r="50" class="ring-fg" data-pct="{{ anillo }}"/></svg>
+      <div class="ring-n"><strong data-count="{{ anillo }}">0</strong><span>%</span></div>
+    </div>
+    <p class="muted center">{{ en_proceso }} {% if en_proceso == 1 %}evaluación en proceso{% else %}evaluaciones en proceso{% endif %}</p>
+  </article>
+</section>
+
+<section class="grid-main">
+  <article class="card reveal">
+    <div class="card-h"><h3>Evaluaciones recientes</h3><a href="{% url 'historial' %}" class="link">Ver historial</a></div>
+    {% if recientes %}
+    <ul class="list">
+      {% for e in recientes %}
+      <li><a href="{% if e.finalizada %}{% url 'resultados' e.pk %}{% else %}{% url 'evaluacion' e.pk %}{% endif %}">
+        <span class="avatar sm">{{ e.alternativa.nombre|slice:":1" }}</span>
+        <span class="grow"><b>{{ e.alternativa.nombre }}</b><small>{{ e.fecha_creacion|date:"d/m/Y" }} · {{ e.creador.get_full_name|default:e.creador.username }}</small></span>
+        <span class="badge {% if e.finalizada %}good{% else %}amber{% endif %}">{{ e.get_estado_display }}</span></a></li>
+      {% endfor %}
+    </ul>
+    {% else %}<div class="empty"><p>Aún no hay evaluaciones.</p><a class="btn" href="{% url 'evaluacion_nueva' %}">Crear la primera</a></div>{% endif %}
+  </article>
+  <article class="card reveal">
+    <div class="card-h"><h3>Clasificación FODA acumulada</h3></div>
+    {% for f in foda %}
+    <div class="hbar"><span>{{ f.nombre }}</span><div class="track"><i class="f{{ forloop.counter }}" data-w="{{ f.pct }}"></i></div><b>{{ f.n }}</b></div>
+    {% endfor %}
+    {% if es_admin and pendientes_ia %}
+    <a class="notice reveal" href="{% url 'ia_importancia' %}">{% icono 'spark' %}<span><b>{{ pendientes_ia }} propuesta{{ pendientes_ia|pluralize }}</b> de IS esperan tu revisión</span>{% icono 'arrow' %}</a>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Resultados{% endblock %}
+{% block contenido %}
+{% include "guios/_pasos.html" with activo=3 %}
+<div class="page-head reveal"><div><h1>Resultados y recomendación</h1>
+  <p class="muted">FODA de cada factor según su ponderación media (PM ≥ 3 es positivo) y su alcance.</p></div>
+  <span class="badge lg {% if preliminar %}amber{% else %}good{% endif %}">{% if preliminar %}Resultado preliminar{% else %}Consolidado de {{ n_decisores }} decisor{{ n_decisores|pluralize:"es" }}{% endif %}</span></div>
+{% if not r.n_evaluados %}
+<div class="card empty reveal"><p>Aún no hay factores evaluados. Completa los pasos 1 a 4 para ver el resultado.</p><a class="btn primary" href="{% url 'evaluacion' ev.pk %}">Volver a la evaluación</a></div>
+{% else %}
+<section class="grid-foda" data-stagger>
+  <article class="card q good"><strong data-count="{{ r.cuentas.Fortaleza }}">0</strong><span>Fortalezas</span></article>
+  <article class="card q good"><strong data-count="{{ r.cuentas.Oportunidad }}">0</strong><span>Oportunidades</span></article>
+  <article class="card q bad"><strong data-count="{{ r.cuentas.Debilidad }}">0</strong><span>Debilidades</span></article>
+  <article class="card q bad"><strong data-count="{{ r.cuentas.Amenaza }}">0</strong><span>Amenazas</span></article>
+</section>
+<section class="grid-main">
+  <article class="card reveal">
+    <div class="card-h"><h3>Ponderación media por factor</h3></div>
+    <table class="table"><thead><tr><th>Factor</th><th>Imp. relativa</th><th style="width:34%">Ponderación media</th><th>Alcance</th><th>FODA</th></tr></thead><tbody data-stagger-rows>
+    {% for f in r.filas %}{% if f.ir is not None %}
+      <tr><td><b>{{ f.factor.nombre }}</b></td><td><span class="badge {{ f.ir|clase_ir }}">{{ f.ir|nivel }}</span></td>
+      {% if f.estado == 'evaluado' %}<td><div class="hbar slim"><div class="track"><i class="{{ f.clasificacion|clase_foda }}" data-w="{{ f.pm|pct25 }}"></i></div><b>{{ f.pm|floatformat:1 }}</b></div></td>
+        <td>{{ f.alcance }}</td><td><span class="badge {{ f.clasificacion|clase_foda }}">{{ f.clasificacion }}</span></td>
+      {% elif f.estado == 'no_relevante' %}<td colspan="3" class="muted">Subfactores no evaluados.</td>
+      {% else %}<td colspan="3" class="muted">Pendiente de valorar.</td>{% endif %}</tr>
+    {% endif %}{% endfor %}</tbody></table>
+  </article>
+  <div class="stack">
+    <article class="card reveal reco {% if r.buenos > r.malos %}ok{% elif r.buenos < r.malos %}no{% endif %}">
+      <div class="card-h"><h3>{% icono 'rocket' %} Recomendación GUIOS</h3></div>
+      <p><b>{{ r.decision }}</b></p><p>{{ r.recomendacion }}</p></article>
+    <article class="card reveal">
+      <div class="card-h"><h3>Acciones sugeridas</h3></div>
+      {% if r.acciones %}<ul class="acc">{% for a in r.acciones %}<li><span class="badge {{ a.tipo|clase_foda }}">{{ a.tipo }}</span><div><b>{{ a.factor }}</b><p>{{ a.texto }}</p></div></li>{% endfor %}</ul>
+      {% else %}<p class="muted">No hay acciones registradas para las debilidades y amenazas detectadas.{% if es_admin %} Puedes agregarlas en el <a href="{% url 'catalogo' %}">catálogo</a>.{% endif %}</p>{% endif %}
+    </article>
+    <a class="btn block" href="{% url 'evaluacion' ev.pk %}">Volver a la evaluación</a>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

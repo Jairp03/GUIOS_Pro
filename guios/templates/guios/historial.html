@@ -1,0 +1,19 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Historial{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>Historial de evaluaciones</h1><p class="muted">Consulta evaluaciones anteriores con sus participantes y resultados.</p></div></div>
+<form class="card filters reveal" method="get"><label class="field inline"><span>Alternativa</span><input type="text" name="q" value="{{ q }}" placeholder="Buscar por nombre"></label>
+  <label class="field inline"><span>Fecha</span><input type="date" name="fecha" value="{{ fecha }}"></label><button class="btn">Filtrar</button>
+  {% if q or fecha %}<a class="link" href="{% url 'historial' %}">Limpiar</a>{% endif %}</form>
+<article class="card reveal">
+{% if evaluaciones %}
+<table class="table"><thead><tr><th>Fecha</th><th>Alternativa</th><th>Creador</th><th>Decisores</th><th>Estado</th><th>Resultado</th><th></th></tr></thead><tbody data-stagger-rows>
+{% for e in evaluaciones %}<tr><td>{{ e.fecha_creacion|date:"d/m/Y" }}</td><td><b>{{ e.alternativa.nombre }}</b></td>
+  <td>{{ e.creador.get_full_name|default:e.creador.username }}</td><td>{{ e.participantes.all|length }}</td>
+  <td><span class="badge {% if e.finalizada %}good{% else %}amber{% endif %}">{{ e.get_estado_display }}</span></td>
+  <td>{% if e.resultado %}<span class="badge {% if e.resultado.adoptable %}good{% else %}bad{% endif %}">{% if e.resultado.adoptable %}Adoptable{% else %}No adoptable{% endif %}</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+  <td class="actions"><a class="btn sm" href="{% if e.finalizada %}{% url 'resultados' e.pk %}{% else %}{% url 'evaluacion' e.pk %}{% endif %}">{% icono 'eye' %} Abrir</a></td></tr>{% endfor %}
+</tbody></table>
+{% else %}<div class="empty"><p>No hay evaluaciones que coincidan.</p></div>{% endif %}
+</article>
+{% endblock %}

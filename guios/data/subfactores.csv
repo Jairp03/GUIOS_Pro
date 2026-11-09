@@ -1,0 +1,62 @@
+Dimensión	Factor	Subfactor
+Tecnológica	Compatibilidad	Una empresa proporciona una infraestructura de nube lista para usar para este software
+Tecnológica	Compatibilidad	Los programas informáticos pueden exportar formatos propietarios
+Tecnológica	Compatibilidad	El software interactúa y se integra con el software propietario existente
+Tecnológica	Compatibilidad	El software está certificado para operar en su nicho de mercado
+Tecnológica	Compatibilidad	El software es compatible con los casos de uso y las funcionalidades más comunes
+Tecnológica	Compatibilidad	El software es compatible con múltiples componentes de hardware
+Tecnológica	Compatibilidad	El software utiliza formatos estándar
+Tecnológica	Compatibilidad	El software es compatible con varios sistemas operativos diferentes (el software es multiplataforma)
+Tecnológica	Personalización	El acceso al código fuente es un incentivo para la organización
+Tecnológica	Personalización	El software se puede ampliar fácilmente para satisfacer las necesidades de la organización modificando el código fuente
+Tecnológica	Personalización	Las innovaciones se introducen en el software a un ritmo rápido
+Tecnológica	Personalización	El software es fácil de personalizar sin necesidad de modificar el códigofuente
+Tecnológica	Personalización	El software soporta nuevas funciones a través de módulos (el software es modular)
+Tecnológica	Personalización	Hay un repositorio público de extensiones para este software
+Tecnológica	Prueba	El software es fácil de desplegar y de probar
+Tecnológica	Fiabilidad	El software es fiable y estable
+Tecnológica	Fiabilidad	El software tiene un buen historial en cuanto a errores de seguridad (el software es seguro)
+Tecnológica	Fiabilidad	El software es más flexible que la solución propietaria
+Tecnológica	Fiabilidad	El software es más confiable que la solución propietaria
+Tecnológica	Fiabilidad	El programa proporciona una amplia variedad de funciones de control de acceso
+Tecnológica	Reusabilidad	La licencia permite extensiones propietarias
+Tecnológica	Reusabilidad	El software se ofrece como una biblioteca / marco de trabajo
+Tecnológica	Usabilidad	El software proporciona una interfaz gráfica de usuario (GUI)
+Tecnológica	Usabilidad	El software es más fácil de usar que la alternativa propietaria
+Tecnológica	Usabilidad	El software es fácil de aprender
+Tecnológica	Usabilidad	El usuario está descontento con el software propietario
+Tecnológica	Mantenibilidad	El software es mantenido activamente por los desarrolladores
+Tecnológica	Portabilidad	Una versión de aplicación móvil de este software está disponible
+Tecnológica	Portabilidad	El software es una sistemas de administración de base de datos independiente
+Tecnológica	Documentación	El software está bien documentado
+Tecnológica	Documentación	La documentación de desarrollo cubre todas las características
+Tecnológica	Documentación	La documentación está disponible en múltiples formatos
+Tecnológica	Documentación	La documentación es fácil de entender
+Tecnológica	Documentación	La documentación está actualizada
+Tecnológica	Documentación	La documentación está escrita por escritores especializados (no desarrolladores)
+Tecnológica	Documentación	La documentación del software es de alta calidad
+Tecnológica	Documentación	El software viene con documentación de desarrollo
+Tecnológica	Documentación	El software viene con documentación de usuario
+Tecnológica	Documentación	La documentación del usuario cubre todas las características
+Tecnológica	Documentación	Los formatos de datos están bien documentados
+Organizacional	Formación	La adopción de este software permite a los usuarios mejorar las habilidades técnicas de TI
+Organizacional	Formación	El personal de la organización puede aprender fácilmente por sí mismo a utilizar este software
+Organizacional	Formación	El personal de la organización está capacitado para resolver problemas tecnológicos
+Organizacional	Formación	Los planes de entrenamiento de este software están disponibles
+Organizacional	Tiempo de adopción	Los requisitos de instalación y despliegue del software son fáciles de cumplir
+Organizacional	Tiempo de adopción	El tiempo requerido para adoptar este software es bajo
+Organizacional	Casos de estudio de adopción FLOSS	Hay informes públicos disponibles en Internet que describen el éxito de la adopción de este software
+Organizacional	Centralidad de la tecnología de la información	La adopción de este software mejora el entorno de trabajo de los usuarios
+Organizacional	Centralidad de la tecnología de la información	Centralizar la infraestructura de TI ayuda a acelerar la adopción de este software
+Organizacional	Apoyo de la alta dirección	La alta dirección apoya la adopción exitosa de este software
+Organizacional	Bloqueo de proveedores	El software reduce las dependencias de los proveedores en su entorno
+Organizacional	Soporte	El soporte de la comunidad para este software está disponible
+Organizacional	Soporte	Soporte de expertos y consultores externos para consultas específicas está disponible
+Organizacional	Soporte	El soporte comercial de este software está disponible 24/7/365
+Organizacional	Soporte	Hay desarrolladores en su organización que saben cómo desarrollar este software
+Organizacional	Soporte	Soporte comercial para la personalización de software está disponible
+Organizacional	Soporte	Es fácil contratar personal informático en la comunidad que conozca este software
+Organizacional	Actitud hacia el cambio	El personal de la organización muestra poca resistencia al cambio tecnológico
+Organizacional	Actitud hacia el cambio	El personal técnico encargado del despliegue y soporte en la organización respalda la adopción de este software
+Económica	Coste total de propiedad	Es poco probable que haya costos ocultos al adoptar este software
+Económica	Coste total de propiedad	La adopción de este software es menos costosa que la alternativa patentada

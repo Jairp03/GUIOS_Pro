@@ -1,0 +1,3 @@
+{% load guios_extras %}
+<ol class="stepper reveal"><li class="{% if activo >= 1 %}on{% endif %}"><span>1</span>Pasos 1-2 Importancia</li><li class="{% if activo >= 2 %}on{% endif %}"><span>2</span>Pasos 3-4 Subfactores</li><li class="{% if activo >= 3 %}on{% endif %}"><span>3</span>Pasos 5-6 Resultados</li>
+<li class="push"><a href="{% url 'evaluacion' ev.pk %}">{{ ev.alternativa.nombre }}</a></li></ol>

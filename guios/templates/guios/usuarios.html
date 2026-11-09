@@ -1,0 +1,19 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Usuarios{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>Usuarios y roles</h1><p class="muted">Registra, desactiva usuarios y asigna el rol de Decisor o Administrador.</p></div></div>
+<section class="grid-side">
+  <article class="card reveal"><table class="table"><thead><tr><th>Usuario</th><th>Rol</th><th>Estado</th><th></th></tr></thead><tbody data-stagger-rows>
+  {% for x in lista %}<tr class="{% if not x.u.is_active %}off{% endif %}"><td><span class="avatar sm">{{ x.u|iniciales }}</span> <b>{{ x.u.get_full_name|default:x.u.username }}</b><br><small class="muted">{{ x.u.username }}</small></td>
+    <td><form method="post" class="inline row">{% csrf_token %}<input type="hidden" name="cambiar_rol" value="{{ x.u.pk }}"><select name="rol" class="mini" onchange="this.form.submit()"><option value="DECISOR" {% if x.rol == 'DECISOR' %}selected{% endif %}>Decisor</option><option value="ADMIN" {% if x.rol == 'ADMIN' %}selected{% endif %}>Administrador</option></select></form></td>
+    <td><span class="badge {% if x.u.is_active %}good{% else %}neutral{% endif %}">{% if x.u.is_active %}Activo{% else %}Inactivo{% endif %}</span></td>
+    <td class="actions"><form method="post" class="inline">{% csrf_token %}<input type="hidden" name="toggle" value="{{ x.u.pk }}"><button class="btn sm">{% if x.u.is_active %}Desactivar{% else %}Activar{% endif %}</button></form></td></tr>{% endfor %}
+  </tbody></table></article>
+  <article class="card reveal"><div class="card-h"><h3>Nuevo usuario</h3></div>
+    <form method="post" class="stack">{% csrf_token %}{{ form.non_field_errors }}
+      <label class="field"><span>Correo</span>{{ form.correo }}{% for e in form.correo.errors %}<em class="err">{{ e }}</em>{% endfor %}</label>
+      <label class="field"><span>Nombre</span>{{ form.nombre }}</label><label class="field"><span>Rol</span>{{ form.rol }}</label>
+      <label class="field"><span>Contraseña temporal</span>{{ form.password }}{% for e in form.password.errors %}<em class="err">{{ e }}</em>{% endfor %}</label>
+      <button class="btn primary">Crear usuario</button></form></article>
+</section>
+{% endblock %}

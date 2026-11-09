@@ -1,0 +1,37 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}{{ ev.alternativa }}{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>{{ ev.alternativa.nombre }}</h1>
+  <p class="muted">Evaluación #{{ ev.pk }} · creada el {{ ev.fecha_creacion|date:"d/m/Y" }} por {{ ev.creador.get_full_name|default:ev.creador.username }} · {{ ev.get_sector_display }}, {{ ev.get_tamano_display|truncatechars:12 }}</p></div>
+  <span class="badge lg {% if ev.finalizada %}good{% else %}amber{% endif %}">{{ ev.get_estado_display }}</span></div>
+
+<section class="steps card reveal" data-stagger>
+  <div class="step {% if mio.paso1 %}done{% else %}now{% endif %}"><span class="dot">1</span><div><b>Pasos 1 y 2</b><small>Importancia de los factores</small></div>{% if not ev.finalizada %}<a class="btn sm" href="{% url 'importancia' ev.pk %}">{% if mio.paso1 %}Revisar{% else %}Empezar{% endif %}</a>{% endif %}</div>
+  <div class="step {% if mio.paso3 %}done{% elif mio.paso1 %}now{% endif %}"><span class="dot">2</span><div><b>Pasos 3 y 4</b><small>{% if mio.paso1 %}{{ mio.completos }} de {{ mio.relevantes }} factores valorados{% else %}Subfactores{% endif %}</small></div>{% if mio.paso1 and not ev.finalizada %}<a class="btn sm" href="{% url 'subfactores' ev.pk %}">{% if mio.paso3 %}Revisar{% else %}Continuar{% endif %}</a>{% endif %}</div>
+  <div class="step {% if ev.finalizada %}done{% elif mio.paso3 %}now{% endif %}"><span class="dot">3</span><div><b>Pasos 5 y 6</b><small>Resultados y recomendación</small></div>
+    {% if mio.paso1 or ev.finalizada %}<a class="btn sm" href="{% url 'resultados' ev.pk %}">{% if ev.finalizada %}Ver resultados{% else %}Ver preliminar{% endif %}</a>{% endif %}</div>
+</section>
+
+<section class="grid-side">
+  <article class="card reveal">
+    <div class="card-h"><h3>Evaluación en equipo</h3><small class="muted">{{ equipo|length }} decisor{{ equipo|length|pluralize:"es" }} · criterio: {{ ev.get_criterio_display|lower }}</small></div>
+    <ul class="list">
+      {% for e in equipo %}
+      <li><span class="avatar sm">{{ e.p.usuario|iniciales }}</span>
+        <span class="grow"><b>{{ e.p.usuario.get_full_name|default:e.p.usuario.username }}</b>
+          <div class="track thin"><i data-w="{{ e.prog.pct }}"></i></div></span>
+        <span class="badge {% if e.p.enviado %}good{% else %}amber{% endif %}">{% if e.p.enviado %}Completó{% else %}En proceso{% endif %}</span></li>
+      {% endfor %}
+    </ul>
+  </article>
+  <article class="card reveal stack">
+    <div class="card-h"><h3>Acciones</h3></div>
+    {% if not ev.finalizada %}
+      {% if mi_part %}<form method="post" action="{% url 'enviar' ev.pk %}">{% csrf_token %}<button class="btn block" {% if not mio.paso3 %}disabled{% endif %}>Enviar mis valoraciones</button></form>
+        {% if not mio.paso3 %}<small class="muted">Completa los subfactores de tus factores relevantes para poder enviar.</small>{% endif %}{% endif %}
+      {% if puede_cerrar %}<form method="post" action="{% url 'consolidar' ev.pk %}">{% csrf_token %}<button class="btn primary block" data-confirm="Se consolidarán las valoraciones enviadas y la evaluación quedará finalizada. ¿Continuar?">Cerrar etapa y consolidar</button></form>{% endif %}
+    {% else %}<a class="btn primary block" href="{% url 'resultados' ev.pk %}">Ver resultados {% icono 'arrow' %}</a>{% endif %}
+    {% if nivel_is %}<p class="notice static">{% icono 'spark' %}<span>Esta evaluación usa la importancia sugerida ajustada por IA.</span></p>{% endif %}
+  </article>
+</section>
+{% endblock %}

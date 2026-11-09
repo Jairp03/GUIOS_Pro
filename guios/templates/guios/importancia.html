@@ -1,0 +1,27 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Importancia de los factores{% endblock %}
+{% block contenido %}
+{% include "guios/_pasos.html" with activo=1 %}
+<div class="page-head reveal"><div><h1>Importancia de los factores</h1>
+  <p class="muted">Califica cada factor. GUIOS calcula la importancia relativa (promedio con la sugerida) y marca los relevantes (HU-05).</p></div>
+  <div class="counter"><strong id="relCount">0</strong><small>de {{ filas|length }} relevantes</small></div></div>
+<form method="post" id="formImp" class="card reveal">{% csrf_token %}
+  <div class="tabs" data-tabs>{% for d in dims %}<button type="button" class="{% if forloop.first %}on{% endif %}" data-tab="d{{ d.id }}">{{ d.nombre }}</button>{% endfor %}<i class="tab-line"></i></div>
+  {% for d in dims %}
+  <div class="panel {% if forloop.first %}on{% endif %}" data-panel="d{{ d.id }}">
+    <table class="table imp"><thead><tr><th>Factor</th><th>Alcance</th><th>Sugerida</th><th>Tu importancia</th><th>Imp. relativa</th><th>Relevante</th></tr></thead><tbody>
+    {% for x in filas %}{% if x.f.dimension_id == d.id %}
+      <tr data-sug="{{ x.sug }}" data-stagger-row>
+        <td><b>{{ x.f.nombre }}</b></td>
+        <td>{% if x.f.alcance == 'Ambos' %}<select name="a_{{ x.f.id }}" class="mini"><option value="Interno" {% if x.alcance == 'Interno' %}selected{% endif %}>Interno</option><option value="Externo" {% if x.alcance == 'Externo' %}selected{% endif %}>Externo</option></select>{% else %}{{ x.f.alcance }}{% endif %}</td>
+        <td><span class="badge neutral">{{ x.sug|nivel }}</span></td>
+        <td><div class="seg">{% for v, n in niveles %}<label><input type="radio" name="f_{{ x.f.id }}" value="{{ v }}" {% if x.dec == v %}checked{% endif %}><span>{{ n }}</span></label>{% endfor %}</div></td>
+        <td><span class="badge ir">—</span></td><td><span class="badge rel">—</span></td></tr>
+    {% endif %}{% endfor %}
+    </tbody></table>
+  </div>
+  {% endfor %}
+  <div class="form-foot"><small class="muted">La importancia relativa se calcula al instante; se guarda al continuar.</small>
+    <button class="btn primary">Calcular y continuar {% icono 'arrow' %}</button></div>
+</form>
+{% endblock %}

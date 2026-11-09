@@ -1,0 +1,28 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Alternativas{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>Alternativas de software</h1><p class="muted">Registra el software que vas a evaluar.</p></div></div>
+<section class="grid-side">
+  <article class="card reveal">
+    <div class="card-h"><h3>Alternativas registradas</h3><small class="muted">{{ alternativas|length }}</small></div>
+    {% if alternativas %}
+    <table class="table"><thead><tr><th>Nombre</th><th>Descripción</th><th>Evaluaciones</th><th></th></tr></thead><tbody data-stagger-rows>
+      {% for a in alternativas %}
+      <tr><td><b>{{ a.nombre }}</b></td><td class="muted">{{ a.descripcion|default:"—"|truncatechars:90 }}</td><td><span class="badge blue">{{ a.n }}</span></td>
+        <td class="actions"><a class="btn sm" href="{% url 'evaluacion_nueva' %}?alternativa={{ a.pk }}">Evaluar {% icono 'arrow' %}</a>
+          {% if not a.n %}<form method="post" class="inline">{% csrf_token %}<input type="hidden" name="borrar" value="{{ a.pk }}"><button class="icon-btn danger" title="Eliminar" data-confirm="¿Eliminar la alternativa «{{ a.nombre }}»?">{% icono 'trash' %}</button></form>{% endif %}</td></tr>
+      {% endfor %}
+    </tbody></table>
+    {% else %}<div class="empty"><p>Todavía no registras ninguna alternativa.</p></div>{% endif %}
+  </article>
+  <article class="card reveal">
+    <div class="card-h"><h3>Nueva alternativa</h3></div>
+    <form method="post" class="stack">{% csrf_token %}
+      {{ form.non_field_errors }}
+      <label class="field"><span>Nombre</span>{{ form.nombre }}{% for e in form.nombre.errors %}<em class="err">{{ e }}</em>{% endfor %}</label>
+      <label class="field"><span>Descripción</span>{{ form.descripcion }}</label>
+      <button class="btn primary">Guardar alternativa</button>
+    </form>
+  </article>
+</section>
+{% endblock %}

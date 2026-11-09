@@ -1,0 +1,18 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Nueva evaluación{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>Nueva evaluación</h1><p class="muted">Elige la alternativa, define el perfil de tu organización e invita a otros decisores.</p></div></div>
+<form method="post" class="card form-card reveal">{% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="form-grid">
+    <label class="field"><span>Alternativa de software</span>{{ form.alternativa }}{% for e in form.alternativa.errors %}<em class="err">{{ e }}</em>{% endfor %}</label>
+    <label class="field"><span>Sector</span>{{ form.sector }}</label>
+    <label class="field"><span>Tamaño</span>{{ form.tamano }}</label>
+    <label class="field"><span>Criterio de consolidación</span>{{ form.criterio }}<small class="muted">Cómo se combinan las valoraciones de varios decisores.</small></label>
+  </div>
+  <label class="field"><span>Invitar decisores (correos)</span>{{ form.invitados }}<small class="muted">Solo se invita a quienes ya tienen cuenta.</small></label>
+  <label class="check-card">{{ form.usar_is_ia }}<span><b>{% icono 'spark' %} Usar importancia sugerida ajustada por IA</b>
+    <small>El sistema aprende de evaluaciones anteriores de organizaciones parecidas a la tuya. Si hay pocos datos, usa la importancia sugerida de la tesis.</small></span></label>
+  <button class="btn primary">Crear evaluación e iniciar Paso 1 {% icono 'arrow' %}</button>
+</form>
+{% endblock %}

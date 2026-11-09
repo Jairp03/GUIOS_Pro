@@ -1,0 +1,35 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Ingresar{% endblock %}{% block bodyclass %}login-page{% endblock %}
+{% block cuerpo %}
+<div class="login">
+  <section class="login-hero">
+    <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+    <div class="hero-in" data-stagger>
+      <span class="brand brand-lg"><span class="brand-mark">G</span><span>GUIOS <b>PRO</b></span></span>
+      <h1>Decide con datos si adoptas un software libre.</h1>
+      <p>Evalúa factores tecnológicos, organizacionales y económicos, trabaja en equipo y obtén una recomendación explicada.</p>
+      <div class="chips"><span>Tecnológica</span><span>Organizacional</span><span>Económica</span></div>
+    </div>
+  </section>
+  <section class="login-form">
+    <form method="post" class="card login-card reveal">
+      {% csrf_token %}
+      <h2>Iniciar sesión</h2>
+      <p class="muted">Accede con tu correo institucional.</p>
+      {% if error %}<div class="alert bad" role="alert">{{ error }}</div>{% endif %}
+      <label class="field"><span>Correo</span><input type="email" name="correo" placeholder="usuario@example.com" autocomplete="username" required autofocus></label>
+      <div class="field">
+        <label for="login-password" class="muted">Contraseña</label>
+        <div class="password-control">
+          <input id="login-password" type="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+          <button type="button" class="icon-btn password-toggle" data-password-toggle aria-controls="login-password" aria-label="Mostrar contraseña" aria-pressed="false" hidden>
+            {% icono 'eye' %}
+            <svg class="ico password-slash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 3l18 18"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn primary block">Entrar {% icono 'arrow' %}</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

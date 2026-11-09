@@ -1,0 +1,47 @@
+{% extends "guios/base.html" %}{% load guios_extras %}
+{% block titulo %}Catálogo{% endblock %}
+{% block contenido %}
+<div class="page-head reveal"><div><h1>Catálogo de factores</h1><p class="muted">Gestiona dimensiones, factores y subfactores sin tocar el código.</p></div></div>
+<div class="tabs link-tabs reveal">{% for d in dims %}<a class="{% if d.id == dim.id %}on{% endif %}" href="?dim={{ d.id }}">{{ d.nombre }}</a>{% endfor %}</div>
+<section class="grid-side">
+  <article class="card reveal">
+    <table class="table"><thead><tr><th>Factor</th><th>Alcance</th><th>IS vigente</th><th>Subfactores</th><th></th></tr></thead><tbody data-stagger-rows>
+    {% for f in factores %}
+    <tr class="{% if not f.activo %}off{% endif %}"><td><b>{{ f.nombre }}</b>{% if not f.activo %} <span class="badge neutral">de baja</span>{% endif %}{% if f.importancia_sugerida != f.importancia_base %} <span class="badge blue" title="Ajustada respecto de la tesis">ajustada</span>{% endif %}</td>
+      <td>{{ f.alcance }}</td><td>{{ f.importancia_sugerida|nivel }}</td>
+      <td><a class="link" href="?dim={{ dim.id }}&ver={{ f.id }}">{{ f.n_sub }} · ver</a></td>
+      <td class="actions">
+        <button type="button" class="icon-btn" title="Editar" data-open="edit-{{ f.id }}">{% icono 'edit' %}</button>
+        <dialog id="edit-{{ f.id }}" class="modal"><form method="post" class="modal-card">{% csrf_token %}
+          <h3>{% icono 'edit' %} Editar factor</h3>
+          <input type="hidden" name="accion" value="editar_factor"><input type="hidden" name="id" value="{{ f.id }}"><input type="hidden" name="dim_ret" value="{{ dim.id }}"><input type="hidden" name="dimension" value="{{ f.dimension_id }}">
+          <label class="field"><span>Nombre</span><input type="text" name="nombre" value="{{ f.nombre }}" required></label>
+          <label class="field"><span>Alcance</span><select name="alcance">{% for v, n in f.ALCANCES %}<option value="{{ v }}" {% if f.alcance == v %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+          <label class="field"><span>Importancia sugerida</span><select name="importancia_sugerida">{% for v, n in niveles %}<option value="{{ v }}" {% if f.importancia_sugerida == v %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+          <div class="row-btns"><button class="btn primary">Guardar</button><button type="button" class="btn" data-close>Cancelar</button></div></form></dialog>
+        <form method="post" class="inline">{% csrf_token %}<input type="hidden" name="accion" value="{% if f.activo %}baja_factor{% else %}alta_factor{% endif %}"><input type="hidden" name="id" value="{{ f.id }}"><input type="hidden" name="dim_ret" value="{{ dim.id }}">
+          <button class="btn sm" {% if f.activo %}data-confirm="El factor dejará de usarse en nuevas evaluaciones (el historial se conserva). ¿Continuar?"{% endif %}>{% if f.activo %}Dar de baja{% else %}Reactivar{% endif %}</button></form></td></tr>
+    {% empty %}<tr><td colspan="5" class="muted">Esta dimensión no tiene factores.</td></tr>{% endfor %}
+    </tbody></table>
+    {% if factor_ver %}
+    <div class="sub-box reveal"><div class="card-h"><h3>Subfactores de {{ factor_ver.nombre }}</h3></div>
+      <ul class="list compact">{% for s in subs %}<li class="{% if not s.activo %}off{% endif %}"><span class="grow">{{ s.texto }}</span>
+        <form method="post" class="inline">{% csrf_token %}<input type="hidden" name="accion" value="{% if s.activo %}baja_sub{% else %}alta_sub{% endif %}"><input type="hidden" name="id" value="{{ s.id }}"><input type="hidden" name="dim_ret" value="{{ dim.id }}"><button class="btn sm">{% if s.activo %}Dar de baja{% else %}Reactivar{% endif %}</button></form></li>{% endfor %}</ul>
+      <form method="post" class="stack">{% csrf_token %}<input type="hidden" name="accion" value="crear_sub"><input type="hidden" name="factor" value="{{ factor_ver.id }}"><input type="hidden" name="dim_ret" value="{{ dim.id }}">
+        <label class="field"><span>Nuevo subfactor</span><textarea name="texto" rows="2" required></textarea></label><button class="btn sm">Agregar subfactor</button></form>
+      <div class="card-h mt"><h3>Acciones sugeridas</h3></div>
+      <ul class="list compact">{% for a in factor_ver.acciones.all %}<li><span class="badge neutral">{{ a.get_aplica_a_display }}</span><span class="grow">{{ a.descripcion }}</span>
+        <form method="post" class="inline">{% csrf_token %}<input type="hidden" name="accion" value="borrar_accion"><input type="hidden" name="id" value="{{ a.id }}"><input type="hidden" name="dim_ret" value="{{ dim.id }}"><button class="icon-btn danger" title="Eliminar">{% icono 'trash' %}</button></form></li>
+        {% empty %}<li class="muted">Sin acciones registradas.</li>{% endfor %}</ul>
+      <form method="post" class="stack">{% csrf_token %}<input type="hidden" name="accion" value="crear_accion"><input type="hidden" name="factor" value="{{ factor_ver.id }}"><input type="hidden" name="dim_ret" value="{{ dim.id }}">
+        <label class="field"><span>Aplica a</span><select name="aplica_a"><option value="AMB">Debilidad o amenaza</option><option value="DEB">Solo debilidad</option><option value="AME">Solo amenaza</option></select></label>
+        <label class="field"><span>Nueva acción sugerida</span><textarea name="descripcion" rows="2" required></textarea></label><button class="btn sm">Registrar acción</button></form>
+    </div>{% endif %}
+  </article>
+  <article class="card reveal"><div class="card-h"><h3>Nuevo factor</h3></div>
+    <form method="post" class="stack">{% csrf_token %}<input type="hidden" name="accion" value="crear_factor"><input type="hidden" name="dim_ret" value="{{ dim.id }}">
+      <label class="field"><span>Dimensión</span>{{ form_factor.dimension }}</label><label class="field"><span>Nombre</span>{{ form_factor.nombre }}</label>
+      <label class="field"><span>Alcance</span>{{ form_factor.alcance }}</label><label class="field"><span>Importancia sugerida</span>{{ form_factor.importancia_sugerida }}</label>
+      <button class="btn primary">{% icono 'plus' %} Agregar factor</button></form></article>
+</section>
+{% endblock %}
