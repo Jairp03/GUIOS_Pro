@@ -14,7 +14,7 @@
     <label class="field"><span>Sector (opcional)</span><select name="sector"><option value="">Todos</option>{% for v, n in sectores %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label>
     <label class="field"><span>Tamaño (opcional)</span><select name="tamano"><option value="">Todos</option>{% for v, n in tamanos %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label></div>
     <div class="row-btns"><button class="btn primary" name="accion" value="generar_historial">{% icono 'chart' %} Aprender del historial</button>
-    <button class="btn" name="accion" value="generar_llm" {% if not ia_llm_disponible %}disabled title="Configura ANTHROPIC_API_KEY en el archivo .env"{% endif %}>{% icono 'spark' %} Proponer con modelo de lenguaje</button></div></form>
+    {% if ia_llm_disponible %}<button class="btn" name="accion" value="generar_llm">{% icono 'spark' %} Proponer con modelo de lenguaje</button>{% endif %}</div></form>
   <p class="muted small">Historial: estimación bayesiana que combina la IS de la tesis con las valoraciones reales, ponderando por recencia y similitud de perfil. Con pocos datos casi no cambia nada.</p>
 </article>
 <article class="card reveal">
