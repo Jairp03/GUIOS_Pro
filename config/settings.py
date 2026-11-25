@@ -102,3 +102,11 @@ CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-5-5")
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+# --- Render ---
+_render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if _render_host:
+    ALLOWED_HOSTS.append(_render_host)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{_render_host}")
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
